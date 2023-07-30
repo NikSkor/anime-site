@@ -3,6 +3,46 @@ const modal = () => {
   const modalBtn = document.querySelector('.icon_search');
   const modalClose = modal.querySelector('.search-close-switch');
   const modalInput = modal.querySelector('#search-input');
+  const wrapper = document.querySelector('.search-model-result');
+
+  wrapper.style.width = '100%';
+  wrapper.style.maxWidth = '500px';
+
+
+  const renderFunc = (items) => {
+    wrapper.innerHTML = '';
+
+    items.forEach(item => {
+      wrapper.insertAdjacentHTML(
+        'afterbegin',
+        `
+          <a class="p-2" href="/anime-details.html" target="_blank">${item.title}</a>
+        `
+      );
+    });
+
+  };
+
+  const searchFunc = (searchStr) => {
+      fetch(
+        'https://anime-site-3cdbc-default-rtdb.asia-southeast1.firebasedatabase.app/anime.json'
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          const filteredData = data.filter(dataItem => {
+            return (
+              dataItem.title.toLowerCase().includes(searchStr.toLowerCase()) ||
+              dataItem.description
+                .toLowerCase()
+                .includes(searchStr.toLowerCase())
+            );
+          });
+          const result = filteredData.slice(0, 5);
+          renderFunc(result);
+        });
+  };
 
   modalBtn.addEventListener('click', () => {
     modal.style.display = 'block';
@@ -14,7 +54,7 @@ const modal = () => {
 
   modalInput.addEventListener('input', (e) => {
     e.preventDefault();
-    console.log(e.target.value);
+    searchFunc(e.target.value);
   });
 }
 
