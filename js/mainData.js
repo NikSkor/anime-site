@@ -1,8 +1,8 @@
 const mainData = () => {
 
   const renderAnimeList = (array, ganres) => {
-    console.log('ganres: ', ganres);
-    console.log('array: ', array);
+    // console.log('ganres: ', ganres);
+    // console.log('array: ', array);
 
   }
 
