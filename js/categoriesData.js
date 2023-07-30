@@ -1,31 +1,30 @@
-const mainData = () => {
+const categoriesData = ()=> {
   const preloader = document.querySelector('.preloder');
 
   const renderGanreList = (ganres) => {
     const dropdownBlock = document.querySelector('.header__menu .dropdown');
     dropdownBlock.innerHTML = '';
-    
-    ganres.forEach(ganre => {
+
+    ganres.forEach((ganre) => {
       dropdownBlock.insertAdjacentHTML(
         'beforeend',
         `
           <li><a href="./categories.html?ganre=${ganre}">${ganre}</a></li>
         `
       );
-    })
+    });
   };
 
   const renderAnimeList = (array, ganres) => {
-    const wrapper = document.querySelector('.product .col-lg-8');
+    const wrapper = document.querySelector('.product-page .col-lg-8');
     wrapper.innerHTML = '';
-    ganres.forEach((ganre)=>{
+    ganres.forEach((ganre) => {
       const productBlock = document.createElement('div');
       const listBlock = document.createElement('div');
-      const list = array.filter(item => item.ganre === ganre);
+      const list = array.filter((item) => item.tags.includes(ganre));
 
       listBlock.classList.add('row');
       productBlock.classList.add('mb-5');
-
 
       productBlock.insertAdjacentHTML(
         'beforeend',
@@ -45,17 +44,17 @@ const mainData = () => {
         `
       );
 
-      list.forEach((item)=> {
+      list.forEach((item) => {
         const tagsBlock = document.createElement('ul');
 
-        item.tags.forEach(tag => {
+        item.tags.forEach((tag) => {
           tagsBlock.insertAdjacentHTML(
             'beforeend',
             `
             <li>${tag}</li>
           `
           );
-        })
+        });
 
         listBlock.insertAdjacentHTML(
           'beforeend',
@@ -75,7 +74,7 @@ const mainData = () => {
           `
         );
       });
-      
+
       productBlock.append(listBlock);
       wrapper.append(productBlock);
 
@@ -83,18 +82,16 @@ const mainData = () => {
         elem.style.backgroundImage = `url(${elem.dataset.setbg})`;
       });
     });
-
     setTimeout(() => {
       preloader.classList.remove('active');
     }, 500);
-  }
-
+  };
 
   const renderTopAnime = (array) => {
     const wrapper = document.querySelector('.filter__gallery');
     wrapper.innerHTML = '';
 
-    array.forEach((item)=> {
+    array.forEach((item) => {
       wrapper.insertAdjacentHTML(
         'beforeend',
         `
@@ -107,11 +104,11 @@ const mainData = () => {
         `
       );
     });
-    
+
     wrapper.querySelectorAll('.set-bg').forEach((elem) => {
       elem.style.backgroundImage = `url(${elem.dataset.setbg})`;
     });
-  }
+  };
 
   fetch(
     'https://anime-site-3cdbc-default-rtdb.asia-southeast1.firebasedatabase.app/anime.json'
@@ -121,16 +118,21 @@ const mainData = () => {
     })
     .then((data) => {
       const ganres = new Set();
+      const ganreParams = new URLSearchParams(window.location.search).get('ganre');
 
-
-      data.forEach((item)=> {
+      data.forEach((item) => {
         ganres.add(item.ganre);
-      })
+      });
 
       renderTopAnime(data.sort((a, b) => b.views - a.views).slice(0, 5));
-      renderAnimeList(data, ganres);
+      if (ganreParams) {
+        renderAnimeList(data, [ganreParams]);
+        
+      } else {
+        renderAnimeList(data, ganres);
+      }
       renderGanreList(ganres);
     });
 };
 
-mainData();
+categoriesData();

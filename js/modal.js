@@ -8,6 +8,18 @@ const modal = () => {
   wrapper.style.width = '100%';
   wrapper.style.maxWidth = '500px';
 
+  const debounce = (func, ms = 500) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(()=> {func.apply(this, args)}, ms)
+    }
+  };
+
+  const searchDebounce = debounce((searchStr)=> {
+    searchFunc(searchStr);
+  }, 700)
+
 
   const renderFunc = (items) => {
     wrapper.innerHTML = '';
@@ -16,7 +28,7 @@ const modal = () => {
       wrapper.insertAdjacentHTML(
         'afterbegin',
         `
-          <a class="p-2" href="/anime-details.html" target="_blank">${item.title}</a>
+          <a class="p-2" href="/anime-details.html?itemId=${item.id}" target="_blank">${item.title}</a>
         `
       );
     });
@@ -54,7 +66,8 @@ const modal = () => {
 
   modalInput.addEventListener('input', (e) => {
     e.preventDefault();
-    searchFunc(e.target.value);
+    // searchFunc(e.target.value);
+    searchDebounce(e.target.value);
   });
 }
 
